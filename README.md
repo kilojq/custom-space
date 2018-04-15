@@ -64,14 +64,14 @@ npm start
 这里图片预加载和页面中拖拽元素的图片引用的路径，都交给node去生成，要注意的是图片文件的放置要按要求来，页面UI界面相关的图片请统一放在 img/ 文件夹的根目录下，而选项图片请分类放在不同文件夹中，并将这些分类文件夹放在 img/Assest 目录里。这样项目运行时会根据分类文件夹，以文件夹名自动生成对于的元素菜单选项，如下图:
 
 
-![配图1](/images/screenshot/img1.jpg "配图1")
+![配图1](/screenshot/img1.jpg "配图1")
 
 如果要修改选项名，可通过配置入口文件 srv/App.js 的 App.init() 的 tabBtnNames 选项来实现，详见初始化配置部分。
 
 
 效果:
 
- ![配图2](/images/screenshot/img2.jpg "配图2")
+ ![配图2](/screenshot/img2.jpg "配图2")
 
 ## 初始化配置
 
@@ -90,7 +90,7 @@ App.init(config)
 
 ## 截图
 
- ![配图3](/images/screenshot/img3.jpg "配图3")
+ ![配图3](/screenshot/img3.jpg "配图3")
 
 
 ## 最后
