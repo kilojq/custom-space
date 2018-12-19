@@ -8,5 +8,7 @@ App.init({
         "Items2": "人物",
         "Items3": "猫",
         "Items4": "狗",
-    }
+    },
+    rotatable: false,
+    scalable: false
 })

@@ -2,12 +2,17 @@ import Item from './item'
 import html2canvas from './html2canvas.min'
 import mp3 from '../media/bgm.mp3'
 import assets_data from '../data'
+const default_config = {
+	tabBtnNames: {},
+	rotatable: true,
+    scalable: true
+}
 const App = {
 	init: function(option){
-		var option = option || {};
+		this.option = Object.assign({}, default_config, option);
 		this.currentItem = null;
 		this.isProducePic = false;
-		this.tabBtnNames = option.tabBtnNames || {};
+		this.tabBtnNames = this.option.tabBtnNames;
 		// console.log(assets_data)
 		this.preload.init();
 		
@@ -114,7 +119,7 @@ const App = {
 			if(Math.abs(_this.itemLastLeft - $(this).offset().left)<15 && Math.abs(_this.itemLastTop - $(this).offset().top)<15){
 				var index = $(this).data("index");
 				_this.currentItem && _this.currentItem.removeClass("active");
-				_this.currentItem = new Item(dataList[index]);
+				_this.currentItem = new Item(dataList[index], _this.option);
 //				_this.currentItem.addClass("active");
 				App.setCamera();
 			}

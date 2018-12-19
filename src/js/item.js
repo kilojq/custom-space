@@ -3,11 +3,13 @@
  * */
 import App from './main';
 
-const Item = function(option){
-	this.url = option.url;
-	this.width = this.sourceWidth = option.width;
-	this.height = this.sourceHeight = option.height;
-	// this.id = option.id;
+const Item = function(data, option){
+	this.url = data.url;
+	this.width = this.sourceWidth = data.width;
+	this.height = this.sourceHeight = data.height;
+	// this.id = data.id;
+	this.scalable = option.scalable
+	this.rotatable = option.rotatable
 	
 	this.init()
 	return this.$itemElement;
@@ -24,16 +26,14 @@ Item.prototype.init = function(){
 }
 //创建dom元素
 Item.prototype.createElement = function(){
-	var winWidth = $(window).width();
-	var winHeight = $(window).height();
+	const winWidth = $(window).width();
+	const winHeight = $(window).height();
 	this.left = winWidth/2;
 	this.top = (winHeight - this.height)/2;
 	this.isRotate = false;
-	var newItem = $(`<div class="cs-item active">
+	const newItem = $(`<div class="cs-item active">
     					<img src="" alt="" class="cs-body" />
     					<div class="cs-btn-remove"></div>
-						<div class="cs-btn-rotate"></div>
-						<div class="cs-btn-resize"></div>
     				</div>`);
     newItem.width(this.width);
     newItem.height(this.height);
@@ -50,8 +50,10 @@ Item.prototype.createElement = function(){
 }
 //调整元素大小
 Item.prototype.bindResizeHandle = function(){
-	var _this = this;
-	var tx,ty,cx,cy;
+	if (!this.scalable) return;
+	this.$itemElement.append('<div class="cs-btn-resize"></div>');
+	const _this = this;
+	let tx,ty,cx,cy;
 	this.$itemElement.children(".cs-btn-resize").on("touchstart",function(e){
 		tx = e.touches[0].clientX;
 		ty = e.touches[0].clientY;
@@ -59,10 +61,10 @@ Item.prototype.bindResizeHandle = function(){
 		cy = _this.$itemElement.offset().top + _this.height/2;
 		e.stopPropagation()
 	}).on("touchmove",function(e){
-		var x = e.touches[0].clientX - cx;
-		var y = e.touches[0].clientY - cy;
-		var l1 = Math.sqrt(Math.pow(x,2),Math.pow(y,2));
-		var l2 = Math.sqrt(Math.pow(_this.sourceWidth/2,2),Math.pow(_this.sourceHeight/2,2));
+		const x = e.touches[0].clientX - cx;
+		const y = e.touches[0].clientY - cy;
+		const l1 = Math.sqrt(Math.pow(x,2),Math.pow(y,2));
+		const l2 = Math.sqrt(Math.pow(_this.sourceWidth/2,2),Math.pow(_this.sourceHeight/2,2));
 		_this.scale = l1/l2;
 		_this.width = _this.sourceWidth * _this.scale;
 		_this.height = _this.sourceHeight * _this.scale;
@@ -79,7 +81,7 @@ Item.prototype.bindResizeHandle = function(){
 }
 //移除元素
 Item.prototype.bindRemoveHandle = function(){
-	var _this = this;
+	let _this = this;
 	this.$itemElement.children(".cs-btn-remove").on("touchend",function(e){	
 		_this.$itemElement.off("touchstart");
 		_this.$itemElement.off("touchmove");
@@ -94,21 +96,21 @@ Item.prototype.bindRemoveHandle = function(){
 }
 //移动元素
 Item.prototype.bindMoveHandle = function(){
-	var _this = this;
-	var tx,ty;
+	const _this = this;
+	let tx,ty;
 	this.$itemElement.on("touchstart",function(e){
 		App.currentItem && App.currentItem.removeClass("active");
 		App.currentItem = _this.$itemElement;
 		App.currentItem.addClass("active").appendTo($("#room"));
 		tx = e.touches[0].clientX - _this.$itemElement.offset().left - _this.width/2;
 		ty = e.touches[0].clientY - _this.$itemElement.offset().top - _this.height/2;
-		var s = _this.scale + 0.1;
+		// const s = _this.scale + 0.1;
 		e.stopPropagation()
 	}).on("touchmove",function(e){		
 		if(!_this.isRotate)	{
 
-			var x = e.touches[0].clientX - tx;
-			var y = e.touches[0].clientY - ty;
+			const x = e.touches[0].clientX - tx;
+			const y = e.touches[0].clientY - ty;
 			App.currentItem.css({
 				"left": x,
 				"top": y
@@ -125,20 +127,23 @@ Item.prototype.bindMoveHandle = function(){
 }
 //旋转元素
 Item.prototype.bindRotateHandle = function(){
-	var _this = this;
-	var ax,ay;
-	this.$itemElement.children(".cs-btn-rotate").on("touchstart",function(e){
+	if (!this.rotatable) return;
+	const _this = this;
+	let ax,ay;
+	const rotateBtn = $('<div class="cs-btn-rotate"></div>');
+	this.$itemElement.append(rotateBtn)
+	rotateBtn.on("touchstart",function(e){
 		_this.isRotate = true;
 		ax = _this.$itemElement.offset().left + _this.width/2;
 		ay = _this.$itemElement.offset().top + _this.height/2; 
 		e.stopPropagation()
 	}).on("touchmove",function(e){
 		if(_this.isRotate)	{
-			var bx = e.touches[0].clientX;
-			var by = e.touches[0].clientY;
-			var ox = bx - ax;
-			var oy = by - ay;
-			var angle = Math.atan( Math.abs( ox/oy ) )/( 2 * Math.PI ) * 360;
+			const bx = e.touches[0].clientX;
+			const by = e.touches[0].clientY;
+			const ox = bx - ax;
+			const oy = by - ay;
+			let angle = Math.atan( Math.abs( ox/oy ) )/( 2 * Math.PI ) * 360;
 			if( ox < 0 && oy < 0)
 			{
 				angle = -angle;
