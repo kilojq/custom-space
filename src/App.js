@@ -1,6 +1,7 @@
 import App from './js/main'
+import data from './data'
 import './css/index.scss'
-
+console.log(data)
 App.init({
     tabBtnNames: {
         "Items1": "家具",

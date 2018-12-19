@@ -1,33 +1,31 @@
 import Item from './item'
 import html2canvas from './html2canvas.min'
 import mp3 from '../media/bgm.mp3'
-// import DATA from '../data'
+import assets_data from '../data'
 const App = {
 	init: function(option){
 		var option = option || {};
-		var _this = this;
 		this.currentItem = null;
 		this.isProducePic = false;
 		this.tabBtnNames = option.tabBtnNames || {};
-		// console.log(DATA)
+		// console.log(assets_data)
 		this.preload.init();
 		
 		$("#view").on("touchmove",function(e){
 			e.preventDefault();
 		})
 
-		
 	},
 	ready: function(){
 		// console.log(App)
 		var _this = this;
 		
 		//生成菜单
-		for(var k in DATA){
+		for(var k in assets_data){
 			if(k !== "_res"){
 				var name = this.tabBtnNames[k] || k;
 				$(".cs-tab-tools").append('<div class="cs-tab-btn">'+ name +'</div>')
-				_this.setMenuItem(DATA[k]);
+				_this.setMenuItem(assets_data[k]);
 			}
 		}
 		$(".cs-tab-btn").eq(0).addClass("active");
@@ -40,6 +38,7 @@ const App = {
 
 
 		$(".btn-start").on("touchend",function(e){
+			App.music.init();
 			$('.load').fadeOut(500);
 			$(".main").fadeIn(500);
 			e.preventDefault();
@@ -124,7 +123,7 @@ const App = {
 	},
 	//预加载
 	preload: {
-		res: [...DATA["_res"], {id:"audio", src: mp3}],
+		res: [...assets_data["_res"], {id:"audio", src: mp3}],
 		init: function (){
 			this.target = new createjs.LoadQueue();
     		this.target.installPlugin(createjs.Sound);
@@ -139,7 +138,7 @@ const App = {
 		complete: function(){
 			$(".progress").hide();
 			$(".btn-start").fadeIn(400);
-			App.music.init();
+			// App.music.init();
 			App.ready();
 		}
 	},

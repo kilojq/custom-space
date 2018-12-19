@@ -1,6 +1,5 @@
 /*
  * 自动复制移动图片文件，同时生成图片数据Json
- * 
  */
 const path = require('path');
 const fs = require('fs');
@@ -52,32 +51,43 @@ var copy = function(src, dst){
     })
 }
 
-function exists(src,dst,callback){
-    //测试某个路径下文件是否存在
-    let exists = fs.existsSync(dst);
-    if(exists){//不存在
-        callback(src,dst);
-    }else{//存在
-        fs.mkdirSync(dst);//创建目录
-        callback(src,dst);
+function exists(src, dst, callback){
+    let exists = fs.existsSync('dist');
+    if(!exists) {
+        fs.mkdirSync('dist');
     }
+    mkdirs(dst)
+    callback(src, dst);
 }
-
-exists(staticImgPath ,distPath ,copy);
+function mkdirs(dirpath, callback) {
+    //检测某个路径下的文件是否存在
+    let exists = fs.existsSync(dirpath);
+    if(exists) {
+        callback && callback();
+    } else {
+        //尝试创建父目录，然后再创建当前目录
+        mkdirs(path.dirname(dirpath), function(){
+            fs.mkdirSync(dirpath);
+        });
+    }
+};
+exists(staticImgPath, distPath, copy);
 
 
 var copyTo = './dist/data.js';
-// var data = 'export default '+ JSON.stringify(obj);
-var data = 'var DATA = '+ JSON.stringify(obj);
+var data = 'export default '+ JSON.stringify(obj);
+// var data = 'var DATA = '+ JSON.stringify(obj);
 fs.writeFile('./src/data.js', data,  function(err) {
     if (err) {
         return console.error(err);
     }
     console.log("src数据写入成功！");
 })
-fs.writeFile(copyTo, data,  function(err) {
-    if (err) {
-        return console.error(err);
-    }
-    console.log("dist数据写入成功！");
-});
+if(process.env.NODE_ENV === 'production'){
+    fs.writeFile(copyTo, data, function(err) {
+        if (err) {
+            return console.error(err);
+        }
+        console.log("dist数据写入成功！");
+    });
+}
