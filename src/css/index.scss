@@ -271,6 +271,9 @@ html, body {
             background: url() center center no-repeat;
             -webkit-background-size: contain;
             background-size: contain;
+            &.active{
+                background-color: #f1f1f1;
+            }
         }
     }
 }

@@ -4,6 +4,8 @@ import mp3 from '../media/bgm.mp3'
 import assets_data from '../data'
 const default_config = {
 	tabBtnNames: {},
+	backgroundSetable: false,
+    backgroundGroupName: 'background',
 	rotatable: true,
     scalable: true
 }
@@ -16,7 +18,7 @@ const App = {
 		// console.log(assets_data)
 		this.preload.init();
 		
-		$(".load,#view").on("touchmove",function(e){
+		$("#view, .load, .cs-tab-tools, .footer, .cs-btn-camera, .loading-layer").on("touchmove",function(e){
 			e.preventDefault();
 		})
 		$(document).on("touchend",function(){
@@ -29,11 +31,12 @@ const App = {
 		var _this = this;
 		
 		//生成菜单
-		for(var k in assets_data){
-			if(k !== "_res"){
-				var name = this.tabBtnNames[k] || k;
+		for(let key in assets_data){
+			if(key !== "_res"){
+				const name = this.tabBtnNames[key] || key;
+				const isSetBg = this.option.backgroundSetable && key.indexOf(this.option.backgroundGroupName) > -1
 				$(".cs-tab-tools").append('<div class="cs-tab-btn">'+ name +'</div>')
-				_this.setMenuItem(assets_data[k]);
+				_this.setMenuItem(assets_data[key], isSetBg);
 			}
 		}
 		$(".cs-tab-btn").eq(0).addClass("active");
@@ -71,7 +74,9 @@ const App = {
 				App.isProducePic = true;
 				html2canvas($("#view").get(0)).then(function(canvas) {
 					timeout(500).then(function(){
-						$("<img>").attr("src",canvas.toDataURL()).addClass("cs-pic").appendTo($("body")).fadeIn(300);
+						$("<img>").attr("src",canvas.toDataURL()).addClass("cs-pic").appendTo($("body")).fadeIn(300).on("touchmove",function(e){
+							e.preventDefault();
+						});
 						App.loading.hide();
 						return timeout(1000)
 					}).then(function(){
@@ -101,18 +106,19 @@ const App = {
 		}
 	},
 	//生成元素菜单
-	setMenuItem: function(dataList){
+	setMenuItem: function(dataList, isSetBg = false){
 		var _this = this;
 		// console.log(dataList)
 		var ul = $("<ul>",{
 			class: "cs-tab-con"
 		}).appendTo(".cs-tab-contents")
 		for(var i = 0;i < dataList.length;i++){
-			var data = dataList[i];
-			$('<li>').css({
+			let data = dataList[i];
+			let li = $('<li>').css({
 				"backgroundImage": "url("+ data.url +")",
 				"backgroundSize": data.width > data.height?"contain" : "auto 92%",
 			}).data("index",i).appendTo(ul);
+			if (isSetBg && !i) {li.addClass('active')}
 		}
 		
 		ul.on("touchstart",">li",function(){
@@ -120,17 +126,21 @@ const App = {
 			_this.itemLastTop = $(this).offset().top;
 		}).on("touchend",">li",function(){
 			if(Math.abs(_this.itemLastLeft - $(this).offset().left)<15 && Math.abs(_this.itemLastTop - $(this).offset().top)<15){
-				var index = $(this).data("index");
+				const index = $(this).data("index");
+				if (isSetBg) {
+					ul.children().removeClass('active')
+					$(this).addClass('active')
+					$('#room').css({
+						"backgroundImage": "url("+ dataList[index].url +")",
+					})
+					return false
+				}
 				_this.currentItem && _this.currentItem.removeClass("active");
 				_this.currentItem = new Item(dataList[index], _this.option);
 //				_this.currentItem.addClass("active");
 				App.setCamera();
 			}
 			return false;
-		})
-		$(".cs-tab-tools, .footer, .cs-btn-camera").on('touchmove',function(e){
-			e.preventDefault();
-			e.stopPropagation();
 		})
 	},
 	//预加载
