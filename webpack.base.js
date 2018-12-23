@@ -1,6 +1,8 @@
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const VConsolePlugin = require('vconsole-webpack-plugin')
+const config = require('./config')
+const assetsPublicPath = config[process.env.NODE_ENV].assetsPublicPath
 
 module.exports = {
   entry: {
@@ -10,7 +12,7 @@ module.exports = {
     filename: 'js/[name].[hash:5].js',
     chunkFilename: '[name].[hash:5].js',
     path: path.resolve(__dirname, 'dist'),
-    publicPath: '/'
+    publicPath: assetsPublicPath
   },
   module: {
     rules: [
@@ -53,7 +55,7 @@ module.exports = {
   plugins: [
     new VConsolePlugin({
       filter: [], // 需要过滤的入口文件
-      enable: process.env.NODE_ENV  === 'production'
+      enable: process.env.NODE_ENV  === 'development'
     }),
     new HtmlWebpackPlugin({
       template: './src/index.html',

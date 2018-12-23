@@ -4,11 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "npm run build-json && cross-env NODE_ENV=development webpack-dev-server -d --hot --config webpack.dev.js",
+    "start": "npm run build-json:dev && cross-env NODE_ENV=development webpack-dev-server -d --hot --config webpack.dev.js",
     "dev": "npm start",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "npm run build-json && cross-env NODE_ENV=production webpack-cli -p --config webpack.pro.js && npm run build-json",
-    "build-json": "node ./utils/build-data-json.js"
+    "build": "npm run build-json:prov && cross-env NODE_ENV=production webpack-cli -p --config webpack.pro.js && npm run build-json:prov",
+    "build-json:dev": "cross-env NODE_ENV=development node ./utils/build-data-json.js",
+    "build-json:prov": "cross-env NODE_ENV=production node ./utils/build-data-json.js"
   },
   "author": "kilojq",
   "repository": {

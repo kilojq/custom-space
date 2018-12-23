@@ -3,14 +3,17 @@
  */
 const path = require('path');
 const fs = require('fs');
-const images = require("images");//node.js轻量级跨平台图像编解码库
+const images = require('images');//node.js轻量级跨平台图像编解码库
+const config = require('../config');
+const assetsPublicPath = config[process.env.NODE_ENV].assetsPublicPath;
 const stat = fs.statSync;
 const staticImgPath = './src/img';
 const distPath = './dist/img';
+
 var obj = {
     _res: []
 };
-// console.log(images('src/img/Assest/Furniture/01.png').width())
+
 var copy = function(src, dst){
     let dirDevide = path.parse(src).name;
     
@@ -38,13 +41,13 @@ var copy = function(src, dst){
                 // console.log(path.parse(_src))
                 var item = {
                     // id: index,
-                    url: _src.substr(6),
+                    url: assetsPublicPath + _src.substr(6),
                     width: img.width(),
                     height: img.height()
                 };
                 obj[dirDevide].push(item)
             }
-            obj["_res"].push(_src.substr(6))
+            obj["_res"].push(assetsPublicPath + _src.substr(6))
         }else if(st.isDirectory()){
             exists(_src, _dst, copy);
         }
@@ -73,8 +76,6 @@ function mkdirs(dirpath, callback) {
 };
 exists(staticImgPath, distPath, copy);
 
-
-var copyTo = './dist/data.js';
 var data = 'export default '+ JSON.stringify(obj);
 // var data = 'var DATA = '+ JSON.stringify(obj);
 fs.writeFile('./src/data.js', data,  function(err) {
@@ -83,11 +84,3 @@ fs.writeFile('./src/data.js', data,  function(err) {
     }
     console.log("src数据写入成功！");
 })
-if(process.env.NODE_ENV === 'production'){
-    fs.writeFile(copyTo, data, function(err) {
-        if (err) {
-            return console.error(err);
-        }
-        console.log("dist数据写入成功！");
-    });
-}
