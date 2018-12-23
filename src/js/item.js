@@ -75,6 +75,7 @@ Item.prototype.bindResizeHandle = function(){
     		"marginTop": -_this.height/2
 		})
 		e.stopPropagation()
+		e.preventDefault()
 	}).on("touchend",function(e){
 		e.stopPropagation()
 	});
@@ -106,6 +107,7 @@ Item.prototype.bindMoveHandle = function(){
 		ty = e.touches[0].clientY - _this.$itemElement.offset().top - _this.height/2;
 		// const s = _this.scale + 0.1;
 		e.stopPropagation()
+		e.preventDefault()
 	}).on("touchmove",function(e){		
 		if(!_this.isRotate)	{
 
@@ -117,12 +119,10 @@ Item.prototype.bindMoveHandle = function(){
 			})
 		}
 		e.stopPropagation()
+		e.preventDefault()
 	}).on("touchend",function(e){		
 		e.stopPropagation()
-	})
-	$(document).on("touchend",function(){
-		App.currentItem && App.currentItem.removeClass("active");
-		App.currentItem = null;
+		e.preventDefault()
 	})
 }
 //旋转元素
@@ -164,6 +164,7 @@ Item.prototype.bindRotateHandle = function(){
 			// console.log(angle)
 		}
 		e.stopPropagation()
+		e.preventDefault()
 	}).on("touchend",function(){
 		_this.isRotate = false;
 	})

@@ -16,10 +16,13 @@ const App = {
 		// console.log(assets_data)
 		this.preload.init();
 		
-		$("#view").on("touchmove",function(e){
+		$(".load,#view").on("touchmove",function(e){
 			e.preventDefault();
 		})
-
+		$(document).on("touchend",function(){
+			App.currentItem && App.currentItem.removeClass("active");
+			App.currentItem = null;
+		})
 	},
 	ready: function(){
 		// console.log(App)
@@ -124,6 +127,10 @@ const App = {
 				App.setCamera();
 			}
 			return false;
+		})
+		$(".cs-tab-tools, .footer, .cs-btn-camera").on('touchmove',function(e){
+			e.preventDefault();
+			e.stopPropagation();
 		})
 	},
 	//预加载
