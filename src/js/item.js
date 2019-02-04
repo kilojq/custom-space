@@ -143,25 +143,11 @@ Item.prototype.bindRotateHandle = function(){
 			const by = e.touches[0].clientY;
 			const ox = bx - ax;
 			const oy = by - ay;
-			let angle = Math.atan( Math.abs( ox/oy ) )/( 2 * Math.PI ) * 360;
-			if( ox < 0 && oy < 0)
-			{
-				angle = -angle;
-			}else if( ox < 0 && oy > 0)
-			{
-				angle = -( 180 - angle )
-			}else if( ox > 0 && oy < 0)
-			{
-				angle = angle;
-			}else if( ox > 0 && oy > 0)
-			{
-				angle = 180 - angle;
-			}
+			const radian = Math.atan2(oy, ox) + Math.abs(Math.atan2(-_this.height, -_this.width))
 			_this.$itemElement.css({
-				"webkitTransform": "rotate("+ angle +"deg)",
-				"transform": "rotate("+ angle +"deg)",
+				"webkitTransform": "rotate("+ radian +"rad)",
+				"transform": "rotate("+ radian +"rad)",
 			})
-			// console.log(angle)
 		}
 		e.stopPropagation()
 		e.preventDefault()
